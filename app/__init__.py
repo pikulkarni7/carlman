@@ -1,26 +1,24 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from .extensions import db
 
 
-from .models.user import User
+def create_app(config_name=None):
+    app = Flask(__name__)
 
-# Create the Flask app instance
-app = Flask(__name__)
+    app.config.from_object("config.Config")
 
-# Load configuration from config.py
-app.config.from_object("app.config.Config")
+    if config_name == "config.TestConfig":
+        app.config.from_object("config.TestingConfig")
 
-# Initialize database
-database = SQLAlchemy(app)
+    db.init_app(app)
 
+    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
 
-# Initialize migration
-migrate = Migrate(app, database)
+    from .routes import bp as main_bp
 
-# # Import your routes
-# from app.routes import authentication
-# # Import other routes as needed
+    app.register_blueprint(main_bp)
 
-# # This import should be at the end to avoid circular dependencies
-# from app import routes
+    return app

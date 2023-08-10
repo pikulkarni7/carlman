@@ -18,6 +18,7 @@ nodeenv==1.8.0
 platformdirs==3.10.0
 pre-commit==3.3.3
 psycopg2==2.9.7
+PyJWT==2.8.0
 pyscopg2==66.0.2
 PyYAML==6.0.1
 SQLAlchemy==2.0.19

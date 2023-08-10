@@ -7,9 +7,10 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = "carlman9876"
+    SECRET_KEY = "india11"
     SQLALCHEMY_DATABASE_URI = "postgresql:///carlman"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BCRYPT_LOG_ROUNDS = 12
 
 
 class ProductionConfig(Config):
@@ -28,3 +29,4 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = "postgresql:///carlman_test"

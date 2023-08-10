@@ -1,8 +1,10 @@
 import datetime
 import bcrypt
 import app
+import jwt
 
-from app import database as db
+from app.extensions import db
+from config import Config as config
 
 
 class User(db.Model):
@@ -16,11 +18,32 @@ class User(db.Model):
 
     def __init__(self, email, password, admin=False):
         self.email = email
-        self.password = bcrypt.generate_password_hash(
-            password, app.config.get("BCRYPT_LOG_ROUNDS")
-        ).decode()
+        bytes = password.encode("utf-8")
+
+        # generating the salt
+        salt = bcrypt.gensalt()
+
+        self.password = bcrypt.hashpw(bytes, salt).decode()
         self.date_added = datetime.datetime.now()
         self.admin = admin
 
     def __repr__(self):
         return f"(id={self.id!r}, email={self.email!r}, is_admin={self.is_admin})"
+
+    def encode_auth_token(self, user_id):
+        """
+        Generates JWT
+        :return: string
+        """
+
+        try:
+            payload = {
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days=1),
+                "iat": datetime.datetime.utcnow(),
+                "sub": user_id,
+            }
+
+            return jwt.encode(payload, app.config.Config.SECRET_KEY, algorithm="HS256")
+
+        except Exception as e:
+            return e
